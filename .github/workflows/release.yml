@@ -1,0 +1,53 @@
+name: Release
+
+# Pushing a tag such as v0.2.0 publishes that version to PyPI.
+#
+# Publishing uses PyPI's trusted publishing, so no token is stored here.
+# One-time setup on pypi.org: add a trusted publisher for the project
+# "somame-core" with owner "Akrosystems", repository "somame-core",
+# workflow "release.yml" and environment "pypi".
+
+on:
+  push:
+    tags: ["v*"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: The tag names the version in pyproject.toml
+        run: |
+          python - <<'PY'
+          import os, tomllib, pathlib
+          version = tomllib.loads(pathlib.Path("pyproject.toml").read_text())["project"]["version"]
+          tag = os.environ["GITHUB_REF_NAME"]
+          assert tag == f"v{version}", f"tag {tag} does not match pyproject version {version}"
+          PY
+
+      - run: pip install -e ".[dev]" build
+      - run: ruff check src tests
+      - run: mypy
+      - run: pytest
+      - run: python -m build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+      - uses: pypa/gh-action-pypi-publish@release/v1

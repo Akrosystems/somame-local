@@ -4,13 +4,13 @@
 the part that decides what an agent is allowed to do and what it is
 allowed to claim.
 
-[![CI](https://github.com/Akrosystems/somame/actions/workflows/ci.yml/badge.svg)](https://github.com/Akrosystems/somame/actions/workflows/ci.yml)
+[![CI](https://github.com/Akrosystems/somame-core/actions/workflows/ci.yml/badge.svg)](https://github.com/Akrosystems/somame-core/actions/workflows/ci.yml)
 [![PyPI](https://img.shields.io/pypi/v/somame-core)](https://pypi.org/project/somame-core/)
 [![Python](https://img.shields.io/pypi/pyversions/somame-core)](https://pypi.org/project/somame-core/)
 [![Licence](https://img.shields.io/badge/licence-MIT-green)](LICENSE)
 [![Types](https://img.shields.io/badge/types-strict-blue)](pyproject.toml)
 
-Somame employs credentialed AI specialists into a company's workforce.
+Somame employs AI specialists, trained to real professional standards, into a company's workforce.
 The hosted platform — tenancy, billing, the workforce office, the role
 catalog — is **Somame Cloud**, and it is proprietary. *This* repository
 is the part that decides what an agent is allowed to do and what it is
@@ -174,7 +174,7 @@ So the restraint is here, readable, installable and testable on its
 own, under a licence that lets you fork it if we ever weaken it.
 
 What is **not** here, and is proprietary: the multi-tenant platform, the
-billing, the orbital workforce office, the 356-role credentialed
+billing, the orbital workforce office, the 370-role
 catalog, the connector implementations, and the hosted operations.
 
 ## Repository structure
@@ -198,8 +198,8 @@ docs/
 ## Development
 
 ```bash
-git clone https://github.com/Akrosystems/somame
-cd somame
+git clone https://github.com/Akrosystems/somame-core
+cd somame-core
 pip install -e ".[dev]"
 pytest          # no database, no network
 mypy            # strict

@@ -23,8 +23,8 @@ contributions are welcome — with the caveat that this library is mostly
 ## Setting up
 
 ```bash
-git clone https://github.com/Akrosystems/somame
-cd somame
+git clone https://github.com/Akrosystems/somame-core
+cd somame-core
 python -m venv .venv && . .venv/bin/activate     # Windows: .venv\Scripts\activate
 pip install -e ".[dev]"
 pytest && mypy && ruff check src tests && ruff format --check src tests
