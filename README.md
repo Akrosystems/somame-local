@@ -151,6 +151,35 @@ the chain in its own database seals each row with
 `AuditEvent.chained(seq=..., prev=head_digest, ...)` and its export
 still verifies with `somame-core verify`.
 
+## somame-local: one specialist on your own machine
+
+The same package installs `somame-local`, the free local edition: a
+specialist that works in **one folder you choose**, with **your own
+model**, under **this gate**. No account, no server, nothing sent
+anywhere except to the model you configured.
+
+```bash
+pip install somame-core
+export ANTHROPIC_API_KEY=...
+somame-local --folder ~/books --role bookkeeper \n  --standard "ACCA Applied Skills: Financial Reporting"
+
+# or a model you run yourself (Ollama, LM Studio, vLLM):
+somame-local --folder . --base-url http://localhost:11434/v1 --model llama3.1
+```
+
+- It can list, read and write files **inside that folder only**: `..`,
+  absolute paths and links that lead out are refused.
+- Reads are free. At level 1 (the default) every write is shown to you
+  in the terminal first; level 2 lets writes land with an undo; level 0
+  blocks them.
+- Commands are offered only with `--allow-commands`, and each one asks
+  you at every level, because executions always escalate.
+- Everything it does goes into a hash-chained audit log in
+  `.somame/audit.jsonl`; `somame-local --verify` checks it, and a log
+  edited by hand stops the specialist from starting.
+- It works *to* the standard you name and is told it does not hold
+  that qualification.
+
 ## API surface
 
 | Module | Exports | One line |
@@ -188,6 +217,11 @@ src/somame_core/
   metrics.py      summarise() and the honest-reporting rules
   audit.py        hash-chained append-only log
   cli.py          gate table, demo, verify
+src/somame_local/
+  workspace.py    the folder fence and the specialist's tools
+  model.py        Anthropic and OpenAI-compatible models, stdlib only
+  session.py      the specialist: model proposes, gate decides, you answer
+  cli.py          somame-local in the terminal
 tests/            140+ tests: no database, no network
 docs/
   ARCHITECTURE.md how the modules fit together

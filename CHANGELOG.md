@@ -7,6 +7,12 @@ changed in any release and will not shrink in any release.
 
 ### Added
 
+- `somame-local`, the free local edition: one supervised specialist in a
+  terminal, confined to one folder, with your own Anthropic key or any
+  OpenAI-compatible server (such as Ollama). Writes ask you at level 1,
+  executions ask at every level, and every step is written to a
+  hash-chained audit log that `somame-local --verify` checks. Standard
+  library only, like the rest of the package.
 - `AsyncRunner` and `AsyncApprover`: the supervised runner for hosts on an
   event loop. Tools, undo functions and approvers may be coroutines. Both
   runners now share one implementation of the decision path, so the

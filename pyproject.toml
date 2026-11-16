@@ -33,9 +33,10 @@ Issues = "https://github.com/Akrosystems/somame-core/issues"
 
 [project.scripts]
 somame-core = "somame_core.cli:main"
+somame-local = "somame_local.cli:main"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/somame_core"]
+packages = ["src/somame_core", "src/somame_local"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
@@ -44,7 +45,7 @@ addopts = "-q --strict-markers"
 
 [tool.mypy]
 python_version = "3.11"
-files = ["src/somame_core"]
+files = ["src/somame_core", "src/somame_local"]
 strict = true
 warn_unreachable = true
 
