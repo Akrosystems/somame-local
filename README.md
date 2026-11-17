@@ -8,7 +8,7 @@
 [![Licence](https://img.shields.io/badge/licence-MIT-green)](LICENSE)
 [![Types](https://img.shields.io/badge/types-strict-blue)](pyproject.toml)
 
-[Somame](https://somame.ai) lets a company employ AI specialists, trained
+Somame lets a company employ AI specialists, trained
 to real professional standards, and supervise them the way it supervises
 people. Somame Local is the free edition: one specialist that works in
 **one folder you choose**, with **your own model**, under the same rule as
@@ -325,7 +325,7 @@ No runtime dependencies, on purpose.
 
 ## Status
 
-`0.2.0`, not yet on PyPI; see [CHANGELOG.md](CHANGELOG.md). The interfaces
+`0.2.0`; see [CHANGELOG.md](CHANGELOG.md). The interfaces
 in `gate` and `provenance` are the ones we consider settled; `runtime` and
 `retrieval` may still move. Breaking changes will go through a major
 version, and the mandatory escalation set will not shrink in any version.
