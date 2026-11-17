@@ -6,7 +6,7 @@ import itertools
 
 import pytest
 
-from somame_core.gate import (
+from somame_local.gate import (
     MANDATORY_ESCALATIONS,
     ActionClass,
     GateError,

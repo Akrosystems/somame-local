@@ -6,7 +6,7 @@ import dataclasses
 
 import pytest
 
-from somame_core.provenance import (
+from somame_local.provenance import (
     FABRICATION_WORDS,
     DataOrigin,
     ProvenanceError,

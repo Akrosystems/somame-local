@@ -1,4 +1,4 @@
-"""The MicroPython port of the gate decides exactly as Core does."""
+"""The MicroPython port of the gate decides exactly as somame_local.gate does."""
 
 from __future__ import annotations
 
@@ -10,7 +10,7 @@ from types import ModuleType
 
 import pytest
 
-from somame_core import ActionClass, Reversibility, SupervisionLevel, decide, requires_human
+from somame_local import ActionClass, Reversibility, SupervisionLevel, decide, requires_human
 
 PORT = Path(__file__).resolve().parents[1] / "ports" / "micropython" / "somame_gate.py"
 
@@ -23,7 +23,7 @@ def _port() -> ModuleType:
     return module
 
 
-def test_every_combination_matches_core() -> None:
+def test_every_combination_matches_the_gate() -> None:
     gate = _port()
     assert set(gate.ACTIONS) == {a.value for a in ActionClass}
     assert set(gate.REVERSIBILITIES) == {r.value for r in Reversibility}
@@ -50,8 +50,8 @@ def test_every_combination_matches_core() -> None:
         )
 
 
-def test_the_mandatory_set_is_cores() -> None:
-    from somame_core import MANDATORY_ESCALATIONS
+def test_the_mandatory_set_is_the_gates() -> None:
+    from somame_local import MANDATORY_ESCALATIONS
 
     assert set(_port().MANDATORY_ESCALATIONS) == {a.value for a in MANDATORY_ESCALATIONS}
 

@@ -12,7 +12,7 @@ from typing import Any
 
 import pytest
 
-from somame_core import GENESIS, AuditEvent, AuditLog, Decision, Intent, SupervisionLevel
+from somame_local import GENESIS, AuditEvent, AuditLog, Decision, Intent, SupervisionLevel
 from somame_local.cli import main
 from somame_local.cloud import Cloud, CloudError, Disconnected
 from somame_local.model import Call, Reply, ToolSpec, Turn

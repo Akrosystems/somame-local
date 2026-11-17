@@ -8,6 +8,9 @@
 
     somame-local --folder ~/books --verify     # check the audit log
 
+    somame-local gate                  # what needs a person, at every level
+    somame-local verify audit.jsonl    # check an exported chain, Cloud's too
+
     # overseen from a Somame Cloud workspace, with a role from its catalogue:
     export SOMAME_CLOUD_KEY=somame_local_...
     somame-local --folder ~/books --cloud https://app.somame.example \\
@@ -35,14 +38,15 @@ import sys
 from pathlib import Path
 from typing import Any
 
-from somame_core import AuditLog, Decision, Intent, SupervisionLevel, TamperDetected
-
-from . import __version__
+from . import __version__, checks
+from .audit import AuditLog, TamperDetected
 from .cloud import Cloud, CloudError, Disconnected
+from .gate import Decision, SupervisionLevel
 from .model import DEFAULT_ANTHROPIC_MODEL, Anthropic, Model, ModelError, OpenAICompatible
 from .office import Office, office_token, serve
 from .roles import find as find_role
 from .roles import keep as keep_roles
+from .runtime import Intent
 from .session import Specialist
 from .store import StoreError, open_store
 from .workspace import PRIVATE
@@ -152,6 +156,9 @@ def _verify(folder: Path) -> int:
 
 
 def main(argv: list[str] | None = None) -> int:
+    given = sys.argv[1:] if argv is None else argv
+    if given and given[0] in checks.COMMANDS:
+        return checks.main(given)
     parser = argparse.ArgumentParser(prog="somame-local", description=__doc__.split("\n\n")[0])
     parser.add_argument("--folder", type=Path, default=Path.cwd(), help="Where it works.")
     parser.add_argument("--role", default="general assistant", help="What it does.")

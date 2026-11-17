@@ -1,11 +1,12 @@
-"""`somame-core` — check the gate, and the honesty rules, from a terminal.
+"""Check the gate, and the honesty rules, from a terminal.
 
-Three subcommands, each answering a question someone evaluating Somame
-would reasonably ask before trusting it:
+Three commands, each answering a question someone evaluating Somame would
+reasonably ask before trusting it:
 
-    somame-core gate          What needs a human, at every level?
-    somame-core demo          Show a run where the gate actually stops something.
-    somame-core verify        Does this audit chain reproduce?
+    somame-local gate           What needs a human, at every level?
+    somame-local demo           Show a run where the gate actually stops something.
+    somame-local verify FILE    Does this audit chain reproduce? Works on a chain
+                                exported from Somame Cloud, too.
 """
 
 from __future__ import annotations
@@ -124,10 +125,14 @@ def _verify(ns: argparse.Namespace) -> int:
     return 0
 
 
+#: The commands this module answers; anything else is a session.
+COMMANDS = frozenset({"gate", "demo", "verify"})
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        prog="somame-core",
-        description="The supervised agent runtime behind Somame. MIT licensed.",
+        prog="somame-local",
+        description="Check the rules Somame works under. MIT licensed.",
     )
     subs = parser.add_subparsers(dest="cmd", required=True)
 

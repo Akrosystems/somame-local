@@ -7,7 +7,7 @@ from typing import Any
 
 import pytest
 
-from somame_core import Decision, Intent, SupervisionLevel, TamperDetected
+from somame_local import Decision, Intent, SupervisionLevel, TamperDetected
 from somame_local.cli import main
 from somame_local.model import Call, OpenAICompatible, Reply, ToolSpec, Turn
 from somame_local.session import Specialist

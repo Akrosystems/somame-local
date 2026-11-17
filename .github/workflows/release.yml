@@ -4,7 +4,7 @@ name: Release
 #
 # Publishing uses PyPI's trusted publishing, so no token is stored here.
 # One-time setup on pypi.org: add a trusted publisher for the project
-# "somame-core" with owner "Akrosystems", repository "somame-core",
+# "somame-local" with owner "Akrosystems", repository "somame-local",
 # workflow "release.yml" and environment "pypi".
 
 on:

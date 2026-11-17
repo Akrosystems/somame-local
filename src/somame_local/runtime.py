@@ -4,7 +4,7 @@ The arrangement matters more than the code. A runtime where the agent
 calls tools directly and the gate is something the tool is supposed to
 consult has already lost: every new tool is a new chance to forget. So
 here the agent never holds a tool. It returns an intent; the runner
-classifies it, puts it through :mod:`somame_core.gate`, and only then —
+classifies it, puts it through :mod:`somame_local.gate`, and only then —
 if the gate clears it, or a human approves it — invokes the tool.
 
 A :class:`Tool` therefore declares what it does (``action``,
@@ -293,7 +293,10 @@ class _Supervisor:
         self.log.append(
             actor=f"agent:{self.agent_id}",
             kind="undo",
-            summary=f"Reversed {outcome.intent.tool} on {outcome.intent.target or 'no named target'}",
+            summary=(
+                f"Reversed {outcome.intent.tool} on "
+                f"{outcome.intent.target or 'no named target'}"
+            ),
             detail={"tool": outcome.intent.tool},
         )
 
@@ -332,7 +335,7 @@ class Runner(_Supervisor):
         started = time.perf_counter()
         try:
             result = tool.run(intent.args)
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 - any tool failure is recorded, not raised
             return self._failed(
                 intent, decision, tool, exc, time.perf_counter() - started, approved_by
             )
@@ -399,7 +402,7 @@ class AsyncRunner(_Supervisor):
         started = time.perf_counter()
         try:
             result = await _settle(tool.run(intent.args))
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 - any tool failure is recorded, not raised
             return self._failed(
                 intent, decision, tool, exc, time.perf_counter() - started, approved_by
             )

@@ -31,10 +31,10 @@ from pathlib import Path
 from typing import Any
 from urllib.parse import parse_qs, urlsplit
 
-from somame_core import Decision, Intent
-
 from .cloud import Disconnected
+from .gate import Decision
 from .model import ModelError
+from .runtime import Intent
 from .session import Specialist
 from .store import Store
 
@@ -147,7 +147,7 @@ class Office:
                 return
             except ModelError as exc:
                 self._notice(str(exc))
-            except Exception as exc:  # keep the office open for the next request
+            except Exception as exc:  # noqa: BLE001 - keep the office open for the next request
                 self._notice(f"That request failed: {type(exc).__name__}: {exc}")
             finally:
                 self.busy = False

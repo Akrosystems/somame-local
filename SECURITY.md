@@ -11,10 +11,11 @@ acting in good faith will not be pursued.
 
 ## Scope
 
-In scope: everything in `src/somame_core` — the gate and its mandatory
+In scope: everything in `src/somame_local`: the gate and its mandatory
 escalation set, provenance enforcement, the runners' approval path,
-retrieval's fail-closed behaviour, the audit chain's tamper-evidence,
-and the CLI.
+retrieval's fail-closed behaviour, the audit chain's tamper-evidence, the
+folder fence, the web office's token and the Cloud oversight client, and
+the CLI.
 
 Out of scope: Somame Cloud (see its own security policy), denial of
 service by volume, and social engineering.

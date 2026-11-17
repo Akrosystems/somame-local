@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import asyncio
 
-from somame_core.gate import ActionClass, Reversibility, SupervisionLevel
-from somame_core.runtime import AsyncRunner, Intent, Runner, Tool
+from somame_local.gate import ActionClass, Reversibility, SupervisionLevel
+from somame_local.runtime import AsyncRunner, Intent, Runner, Tool
 
 
 def _tools(calls: list[str]) -> list[Tool]:

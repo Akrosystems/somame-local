@@ -4,13 +4,13 @@
 # connectors. What it can do is refuse to act on its own say-so. A sensor
 # or actuator that a Somame specialist drives can run this gate before it
 # moves a relay, opens a valve or sends a reading out, and get the same
-# answer Somame Core gives for the same action.
+# answer Somame gives for the same action.
 #
-# The rules are Core's, unchanged: reads and drafts need no one; deleting,
+# The rules are somame_local.gate's, unchanged: reads and drafts need no one; deleting,
 # moving money, publishing outside and changing access always return to a
 # person; anything irreversible always does; at levels 0 and 1 every other
 # write asks; level 0 cannot write at all. tests/test_micropython_gate.py
-# checks every combination against somame_core.gate.decide.
+# checks every combination against somame_local.gate.decide.
 #
 # No enum, dataclasses, typing or f-strings, so it runs on small ports.
 

@@ -1,9 +1,21 @@
 # Changelog
 
-All notable changes to Somame Core. The mandatory escalation set has not
-changed in any release and will not shrink in any release.
+All notable changes to Somame Local (called Somame Core before 0.2.0). The
+mandatory escalation set has not changed in any release and will not shrink
+in any release.
 
 ## 0.2.0
+
+### Changed
+
+- **Somame Core is now part of Somame Local.** The package is `somame-local`
+  and the rules are `somame_local.gate`, `.provenance`, `.runtime`,
+  `.retrieval`, `.metrics` and `.audit`, all importable from `somame_local`.
+  `somame-core gate`, `demo` and `verify` are now `somame-local gate`,
+  `demo` and `verify`. The `somame-core` package was never published, so
+  nothing on PyPI changes. Somame Cloud no longer depends on this
+  repository; it keeps its own copy of the same rules, and its audit
+  export verifies with `somame-local verify`.
 
 ### Added
 
@@ -33,7 +45,7 @@ changed in any release and will not shrink in any release.
 - `install/raspberry-pi.sh`: the web office as a user service on a
   Raspberry Pi or any Debian or Ubuntu machine.
 - `ports/micropython/somame_gate.py`: the gate for microcontrollers,
-  checked against `somame_core.gate.decide` for every combination.
+  checked against `somame_local.gate.decide` for every combination.
 - `AsyncRunner` and `AsyncApprover`: the supervised runner for hosts on an
   event loop. Tools, undo functions and approvers may be coroutines. Both
   runners now share one implementation of the decision path, so the

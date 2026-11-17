@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import pytest
 
-from somame_core.gate import ActionClass, Reversibility, SupervisionLevel
-from somame_core.runtime import (
+from somame_local.gate import ActionClass, Reversibility, SupervisionLevel
+from somame_local.runtime import (
     DenyAll,
     Intent,
     Runner,

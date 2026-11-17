@@ -1,7 +1,8 @@
 # Architecture
 
-Somame Core is six modules and no dependencies. This document maps how
-they fit together, the one path every tool call takes, and where a host
+Somame Local's rules are six modules with no dependencies, and the
+specialist, the web office and the Cloud client are built on them. This
+document maps how the rules fit together, the one path every tool call takes, and where a host
 application plugs in.
 
 ## Module map
@@ -97,7 +98,7 @@ contract, enforced by the tests written against the protocol:
 | Run tools through the gate | Declare `Tool`s and drive `Runner`/`AsyncRunner` |
 | Add a human approval step | Provide an `Approver` / `AsyncApprover` |
 | Back retrieval with a real vector store | Implement `RetrievalIndex` |
-| Keep the audit chain in your database | `AuditEvent.chained()` + `somame-core verify` |
+| Keep the audit chain in your database | `AuditEvent.chained()` + `somame-local verify` |
 | Add new action classes | Add the enum member and tests; `MANDATORY_ESCALATIONS` changes are review-gated by CI |
 
 ## Testing

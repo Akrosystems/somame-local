@@ -146,13 +146,15 @@ class AuditLog:
                 raise TamperDetected(f"Entry at position {i} claims sequence {e.seq}.")
             if e.prev != prev:
                 raise TamperDetected(
-                    f"Entry {e.seq} follows {e.prev[:12]}… but the previous entry hashes to {prev[:12]}… "
+                    f"Entry {e.seq} follows {e.prev[:12]}… but the previous entry "
+                    f"hashes to {prev[:12]}… "
                     "An entry was removed or reordered."
                 )
             recomputed = e.compute_digest()
             if recomputed != e.digest:
                 raise TamperDetected(
-                    f"Entry {e.seq} does not hash to its recorded digest. Its contents were changed."
+                    f"Entry {e.seq} does not hash to its recorded digest. "
+                    "Its contents were changed."
                 )
             prev = e.digest
 

@@ -32,9 +32,10 @@ from dataclasses import asdict, dataclass
 from typing import Any
 from urllib.parse import quote, urlsplit
 
-from somame_core import GENESIS, AuditLog, Decision, Intent
-
 from . import __version__
+from .audit import GENESIS, AuditLog
+from .gate import Decision
+from .runtime import Intent
 
 #: How long a held action waits for an answer from the workspace. Somame
 #: Cloud stops waiting at the same time.

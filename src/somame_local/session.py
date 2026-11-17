@@ -1,7 +1,7 @@
-"""A local specialist: the model proposes, Core's gate decides, you answer.
+"""A local specialist: the model proposes, the gate decides, you answer.
 
-Every tool call the model makes becomes an :class:`~somame_core.Intent`
-and goes through a :class:`~somame_core.Runner`. What the gate lets
+Every tool call the model makes becomes an :class:`~somame_local.Intent`
+and goes through a :class:`~somame_local.Runner`. What the gate lets
 through runs; what it holds is put to you; what it blocks never runs and
 cannot be approved into running. The audit log is saved after every step
 and checked when the specialist starts, so a log edited by hand is
@@ -19,10 +19,11 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
-from somame_core import AuditLog, Decision, Intent, Runner, SupervisionLevel
-
+from .audit import AuditLog
 from .cloud import Cloud, CloudError, Disconnected
+from .gate import Decision, SupervisionLevel
 from .model import Model, ToolSpec, Turn
+from .runtime import Intent, Runner
 from .workspace import PRIVATE, SCHEMAS, Workspace
 
 #: How many tool calls one request may take before it stops and says so.

@@ -5,7 +5,7 @@
 #
 #   sh install/raspberry-pi.sh ~/office "bookkeeper"
 #
-# It installs Python's venv, puts somame-core in ~/.somame/venv, writes
+# It installs Python's venv, puts somame-local in ~/.somame/venv, writes
 # ~/.somame/office.env for your model settings (readable only by you),
 # and starts a user service that runs the office in the folder you name.
 # Nothing here runs as root except apt-get. Re-running it upgrades.
@@ -32,11 +32,11 @@ say "Installing Python's venv (asks for your password once)..."
 sudo apt-get update -qq
 sudo apt-get install -y -qq python3 python3-venv
 
-say "Installing somame-core $VERSION into $VENV..."
+say "Installing somame-local $VERSION into $VENV..."
 mkdir -p "$HOME_DIR" "$FOLDER" "$UNIT_DIR"
 python3 -m venv "$VENV"
 "$VENV/bin/pip" install --quiet --upgrade pip
-"$VENV/bin/pip" install --quiet --upgrade "somame-core==$VERSION"
+"$VENV/bin/pip" install --quiet --upgrade "somame-local==$VERSION"
 
 if [ ! -f "$ENV_FILE" ]; then
     umask 077

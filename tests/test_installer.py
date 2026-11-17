@@ -27,4 +27,4 @@ def test_keys_live_in_a_private_file_not_in_the_service() -> None:
     assert "EnvironmentFile=$ENV_FILE" in unit
     assert "--serve" in unit
     assert "KEY" not in unit  # keys come from the environment file only
-    assert "somame-core==$VERSION" in text  # a pinned release, not whatever is newest
+    assert "somame-local==$VERSION" in text  # a pinned release, not whatever is newest

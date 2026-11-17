@@ -1,8 +1,9 @@
 # Contributing
 
-Thank you for looking at Somame Core. It is MIT licensed, and external
-contributions are welcome — with the caveat that this library is mostly
-*restraint*, so the bar for change is deliberately high.
+Thank you for looking at Somame Local. It is MIT licensed, and external
+contributions are welcome, with one caveat: the rules in it (`gate`,
+`provenance`, `runtime`, `retrieval`, `metrics`, `audit`) are mostly
+*restraint*, so the bar for changing them is deliberately high.
 
 ## Ground rules
 
@@ -23,8 +24,8 @@ contributions are welcome — with the caveat that this library is mostly
 ## Setting up
 
 ```bash
-git clone https://github.com/Akrosystems/somame-core
-cd somame-core
+git clone https://github.com/Akrosystems/somame-local
+cd somame-local
 python -m venv .venv && . .venv/bin/activate     # Windows: .venv\Scripts\activate
 pip install -e ".[dev]"
 pytest && mypy && ruff check src tests && ruff format --check src tests

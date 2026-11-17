@@ -6,7 +6,7 @@ from datetime import UTC, datetime, timedelta
 
 import pytest
 
-from somame_core.retrieval import (
+from somame_local.retrieval import (
     ACL_TTL,
     AclStale,
     Chunk,

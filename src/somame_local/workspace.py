@@ -13,7 +13,8 @@ from collections.abc import Mapping
 from pathlib import Path
 from typing import Any
 
-from somame_core import ActionClass, Reversibility, Tool
+from .gate import ActionClass, Reversibility
+from .runtime import Tool
 
 #: The most a read returns, so a huge file cannot flood the model.
 READ_LIMIT = 60_000
@@ -89,7 +90,7 @@ class Workspace:
         output = (finished.stdout or "") + (finished.stderr or "")
         return {"exit_code": finished.returncode, "output": output[-20_000:]}
 
-    # --- as Core sees them ---------------------------------------------------
+    # --- as the runner sees them ---------------------------------------------
 
     def tools(self, *, commands: bool) -> list[Tool]:
         found = [

@@ -16,7 +16,7 @@ from typing import Any
 
 import pytest
 
-from somame_core import Decision, Intent, SupervisionLevel
+from somame_local import Decision, Intent, SupervisionLevel
 from somame_local.model import Call, Reply, ToolSpec, Turn
 from somame_local.office import Office, office_token, serve
 from somame_local.session import Specialist

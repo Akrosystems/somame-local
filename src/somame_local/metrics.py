@@ -192,7 +192,7 @@ def summarise(
 ) -> Report:
     """Turn finished attempts into a report, leaving blanks where they belong.
 
-    ``hourly_rate`` must be :data:`~somame_core.provenance.DataOrigin.USER_STATED`.
+    ``hourly_rate`` must be :data:`~somame_local.provenance.DataOrigin.USER_STATED`.
     A rate with any other origin is refused rather than used — that
     check is the whole point of threading provenance through to here.
     """

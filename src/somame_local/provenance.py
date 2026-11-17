@@ -188,6 +188,6 @@ class Sourced(Generic[T]):
         return f"{self.value} ({self.origin.value} · {self.source})"
 
 
-def Unavailable(reason: str) -> Sourced[T]:
+def Unavailable(reason: str) -> Sourced[T]:  # noqa: N802 - reads as a value, like a constructor
     """A :class:`Sourced` holding nothing, and saying why."""
     return Sourced(value=None, origin=DataOrigin.UNAVAILABLE, reason=reason)

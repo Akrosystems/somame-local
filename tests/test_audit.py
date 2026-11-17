@@ -6,7 +6,7 @@ from dataclasses import asdict
 
 import pytest
 
-from somame_core.audit import GENESIS, AuditEvent, AuditLog, TamperDetected
+from somame_local.audit import GENESIS, AuditEvent, AuditLog, TamperDetected
 
 
 def built():

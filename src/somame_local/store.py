@@ -4,7 +4,7 @@ SQLite by default, in ``.somame/office.db`` inside the folder: the standard
 library has it, and a laptop or a Raspberry Pi needs nothing else. A home
 server or a small office that wants one database for several offices can
 name a PostgreSQL database instead (``--database postgresql://...``), with
-``pip install "somame-core[postgres]"``. Each office keeps its rows under
+``pip install "somame-local[postgres]"``. Each office keeps its rows under
 its own name, so several can share one database.
 
 The audit log is not here: it stays the hash-chained file the specialist
@@ -187,7 +187,7 @@ class PostgresStore(_SQL):
             import psycopg  # type: ignore[import-not-found,unused-ignore]
         except ImportError as exc:
             raise StoreError(
-                'Install the PostgreSQL driver: pip install "somame-core[postgres]".'
+                'Install the PostgreSQL driver: pip install "somame-local[postgres]".'
             ) from exc
         try:
             self.db = psycopg.connect(url, autocommit=True)

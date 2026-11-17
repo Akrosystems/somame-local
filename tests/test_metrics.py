@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import pytest
 
-from somame_core.metrics import TaskRecord, Totals, summarise, summarise_totals
-from somame_core.provenance import DataOrigin, Sourced, Unavailable
+from somame_local.metrics import TaskRecord, Totals, summarise, summarise_totals
+from somame_local.provenance import DataOrigin, Sourced, Unavailable
 
 BASE = Sourced(3600.0, DataOrigin.RETRIEVED, source="timesheet:2026-09")
 RATE = Sourced(45.0, DataOrigin.USER_STATED, source="director:hourly_cost")
