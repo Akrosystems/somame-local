@@ -321,7 +321,11 @@ PAGE = """<!doctype html>
 </head>
 <body>
 <header>
-  <div class="mark" aria-hidden="true"><span></span></div>
+  <svg class="mark" viewBox="0 0 64 64" aria-hidden="true"><mask id="cut" maskUnits="userSpaceOnUse"
+   x="0" y="0" width="64" height="64"><rect width="64" height="64" fill="#fff"/><circle cx="32" cy="32"
+   r="8.2" fill="#000"/></mask><path d="M41.06 13.42A11.5 11.5 0 1 0 32 32A11.5 11.5 0 1 1 22.94 50.58"
+   fill="none" stroke="currentColor" stroke-width="6.6" stroke-linecap="round" mask="url(#cut)"/>
+   <circle class="gate" cx="32" cy="32" r="5.3"/><circle class="dot" cx="20.67" cy="45.5" r="3.3"/></svg>
   <div><h1 id="role">Somame local office</h1><p id="meta" class="faint"></p></div>
   <p id="state" class="chip"></p>
 </header>
@@ -354,8 +358,7 @@ STYLE = """:root{--void:#110f0d;--soil:#18150f;--clay:#211c16;--edge:#3a3028;--b
 *{box-sizing:border-box}body{margin:0;background:var(--void);color:var(--bone);font:15px/1.5 var(--body)}
 header{display:flex;gap:14px;align-items:center;padding:16px 20px;border-bottom:1px solid var(--edge);background:var(--soil)}
 h1{font-size:18px;margin:0}h2{font-size:17px}.faint{color:var(--dust);margin:0;font-size:13px}
-.mark{width:30px;height:30px;border-radius:50%;border:2px solid var(--ember);display:grid;place-items:center}
-.mark span{width:10px;height:10px;border-radius:50%;background:var(--ember)}
+.mark{width:32px;height:32px;flex:none;color:var(--bone)}.mark .gate{fill:var(--ember)}.mark .dot{fill:var(--jade)}
 .chip{margin-left:auto;font-size:12px;padding:3px 10px;border-radius:99px;border:1px solid var(--edge)}
 main{max-width:860px;margin:0 auto;padding:16px}
 #talk{list-style:none;padding:0;display:flex;flex-direction:column;gap:10px}
