@@ -13,7 +13,12 @@ but to the model you configured.
 * Everything it does is written to a hash-chained audit log in
   ``.somame/audit.jsonl`` inside the folder, which ``--verify`` checks.
 
+* Optionally, a Somame Cloud workspace oversees it (``--cloud``): the
+  level it may run at, approvals answered by a named person there, and
+  its audit log checked against the hash chain. See
+  :mod:`somame_local.cloud`.
+
 Like Somame Core, it has no dependencies beyond the standard library.
 """
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"

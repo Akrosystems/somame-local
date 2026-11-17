@@ -156,12 +156,14 @@ still verifies with `somame-core verify`.
 The same package installs `somame-local`, the free local edition: a
 specialist that works in **one folder you choose**, with **your own
 model**, under **this gate**. No account, no server, nothing sent
-anywhere except to the model you configured.
+anywhere except to the model you configured, unless you choose to have
+a Somame Cloud workspace oversee it (below).
 
 ```bash
 pip install somame-core
 export ANTHROPIC_API_KEY=...
-somame-local --folder ~/books --role bookkeeper \n  --standard "ACCA Applied Skills: Financial Reporting"
+somame-local --folder ~/books --role bookkeeper \
+  --standard "ACCA Applied Skills: Financial Reporting"
 
 # or a model you run yourself (Ollama, LM Studio, vLLM):
 somame-local --folder . --base-url http://localhost:11434/v1 --model llama3.1
@@ -179,6 +181,38 @@ somame-local --folder . --base-url http://localhost:11434/v1 --model llama3.1
   edited by hand stops the specialist from starting.
 - It works *to* the standard you name and is told it does not hold
   that qualification.
+
+### Overseen from a Somame Cloud workspace (optional)
+
+A company can oversee somame-local from its Somame Cloud workspace. A
+manager registers the install there and gets a key, shown once:
+
+```bash
+export SOMAME_CLOUD_KEY=somame_local_...
+somame-local --folder ~/books --cloud https://app.somame.example \
+  --catalogue-role accounts-payable-specialist   # a role from the workspace's catalogue
+```
+
+- It runs **no higher than the level the workspace allows**, whatever
+  `--level` says.
+- If the workspace says so, what the gate holds is **answered by a named
+  person there**, not in the terminal. Nobody answering in 15 minutes is
+  a refusal, and so is a workspace that cannot be reached.
+- Its **audit log is sent after every step**. The workspace checks every
+  entry against the hash chain before keeping it, so a log edited,
+  truncated or replaced on the machine is noticed, and the people who see
+  audit there are told.
+- It **fails closed**: with `--cloud`, it does not start if the workspace
+  cannot be reached or does not accept the key, and it stops if the
+  workspace disconnects it.
+
+What is sent: the audit log (tools, targets, reasons and who answered,
+never the contents of files read), the role, the level, the version and
+the folder's *name*, never its path. An action held for a person in the
+workspace is sent whole, content included, because they need to see it.
+somame-local is open source and runs on your hardware, so a modified copy
+could stop reporting; the workspace shows when it last heard from each
+install.
 
 ## API surface
 
@@ -221,8 +255,9 @@ src/somame_local/
   workspace.py    the folder fence and the specialist's tools
   model.py        Anthropic and OpenAI-compatible models, stdlib only
   session.py      the specialist: model proposes, gate decides, you answer
+  cloud.py        optional oversight from a Somame Cloud workspace
   cli.py          somame-local in the terminal
-tests/            140+ tests: no database, no network
+tests/            150 tests: no database, no network beyond localhost
 docs/
   ARCHITECTURE.md how the modules fit together
 .github/

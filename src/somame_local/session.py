@@ -6,6 +6,10 @@ through runs; what it holds is put to you; what it blocks never runs and
 cannot be approved into running. The audit log is saved after every step
 and checked when the specialist starts, so a log edited by hand is
 noticed.
+
+Overseen from a Somame Cloud workspace (see :mod:`somame_local.cloud`), it
+runs no higher than the level the workspace allows, can have what it holds
+answered there, and sends its log after every step.
 """
 
 from __future__ import annotations
@@ -17,6 +21,7 @@ from typing import Any
 
 from somame_core import AuditLog, Decision, Intent, Runner, SupervisionLevel
 
+from .cloud import Cloud, CloudError, Disconnected
 from .model import Model, ToolSpec, Turn
 from .workspace import PRIVATE, SCHEMAS, Workspace
 
@@ -58,11 +63,32 @@ class Specialist:
         level: SupervisionLevel | int = SupervisionLevel.APPROVE_EVERY_WRITE,
         commands: bool = False,
         ask: Ask,
+        cloud: Cloud | None = None,
+        notice: Callable[[str], None] = lambda message: None,
     ) -> None:
         self.model = model
         self.workspace = Workspace(folder)
         self.level = SupervisionLevel(level)
         self.ask = ask
+        self.cloud = cloud
+        self.notice = notice
+        self._unsent = False
+        self._told_broken = False
+        if cloud is not None:
+            policy = cloud.connect(
+                {
+                    "role": role,
+                    "standard": standard,
+                    "level": int(self.level),
+                    "folder": self.workspace.folder.name,
+                }
+            )
+            if self.level > policy.max_level:
+                notice(
+                    f"{policy.workspace} allows this install level {policy.max_level} at most, "
+                    f"so it runs at level {policy.max_level}."
+                )
+                self.level = SupervisionLevel(policy.max_level)
         self.audit_path = self.workspace.folder / PRIVATE / "audit.jsonl"
         log = self._load_log()
         self.runner = Runner(
@@ -78,6 +104,8 @@ class Specialist:
         self.system = system_prompt(role, standard, self.workspace.folder, self.level)
         self.turns: list[Turn] = []
         self.outcomes: list[Any] = []
+        # Anything logged while the workspace could not be reached goes now.
+        self._report()
 
     def _load_log(self) -> AuditLog:
         if not self.audit_path.exists():
@@ -90,7 +118,35 @@ class Specialist:
         self.audit_path.parent.mkdir(parents=True, exist_ok=True)
         self.audit_path.write_text(self.runner.log.to_jsonl() + "\n", encoding="utf-8")
 
+    def _report(self) -> None:
+        if self.cloud is None:
+            return
+        try:
+            self.cloud.report(self.runner.log, int(self.level))
+        except Disconnected:
+            raise
+        except CloudError as exc:
+            if not self._unsent:
+                self.notice(f"{exc} The log is sent when Somame Cloud can be reached.")
+            self._unsent = True
+            return
+        self._unsent = False
+        if self.cloud.broken and not self._told_broken:
+            self._told_broken = True
+            self.notice(f"Somame Cloud no longer accepts this install's log: {self.cloud.broken}")
+
+    def _checkpoint(self) -> None:
+        self._save_log()
+        self._report()
+
     def _approver(self, intent: Intent, decision: Decision) -> tuple[bool, str]:
+        policy = self.cloud.policy if self.cloud is not None else None
+        if self.cloud is not None and policy is not None and policy.approvals_in_cloud:
+            self.notice(
+                f"Waiting for someone in {policy.workspace} to answer in Somame Cloud: "
+                f"{intent.tool} {intent.target or ''}".rstrip()
+            )
+            return self.cloud.ask(intent, decision)
         return (self.ask(intent, decision), "you")
 
     def handle(self, request: str) -> str:
@@ -101,7 +157,7 @@ class Specialist:
             reply = self.model.complete(self.system, self.turns, self.specs)
             self.turns.append({"role": "assistant", "text": reply.text, "calls": reply.calls})
             if not reply.calls:
-                self._save_log()
+                self._checkpoint()
                 return reply.text
             results = []
             for call in reply.calls:
@@ -120,8 +176,8 @@ class Specialist:
                 self.outcomes.append(outcome)
                 results.append({"id": call.id, "name": call.name, **_result(outcome)})
             self.turns.append({"role": "tool", "results": results})
-            self._save_log()
-        self._save_log()
+            self._checkpoint()
+        self._checkpoint()
         return "I stopped after many steps without finishing. Ask again with a narrower request."
 
 

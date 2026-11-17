@@ -8,6 +8,11 @@
 
     somame-local --folder ~/books --verify     # check the audit log
 
+    # overseen from a Somame Cloud workspace, with a role from its catalogue:
+    export SOMAME_CLOUD_KEY=somame_local_...
+    somame-local --folder ~/books --cloud https://app.somame.example \\
+                 --catalogue-role accounts-payable-specialist
+
 Your key is read from ``ANTHROPIC_API_KEY`` (or ``OPENAI_API_KEY`` for an
 OpenAI-compatible server that needs one). Type a request; when the
 specialist wants to change something, you are shown exactly what and
@@ -25,6 +30,7 @@ from pathlib import Path
 from somame_core import AuditLog, Decision, Intent, SupervisionLevel, TamperDetected
 
 from . import __version__
+from .cloud import Cloud, CloudError, Disconnected
 from .model import DEFAULT_ANTHROPIC_MODEL, Anthropic, Model, ModelError, OpenAICompatible
 from .session import Specialist
 from .workspace import PRIVATE
@@ -46,6 +52,10 @@ def _ask_in_terminal(intent: Intent, decision: Decision) -> bool:
     except EOFError:
         return False
     return answer in ("y", "yes")
+
+
+def _notice(message: str) -> None:
+    print(f"  {message}")
 
 
 def _model(args: argparse.Namespace) -> Model:
@@ -85,6 +95,16 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--model", default="", help="The model's name.")
     parser.add_argument("--base-url", default="", help="An OpenAI-compatible server's address.")
     parser.add_argument("--verify", action="store_true", help="Check the audit log and stop.")
+    parser.add_argument(
+        "--cloud",
+        default=os.environ.get("SOMAME_CLOUD_URL", ""),
+        help="A Somame Cloud workspace that oversees this install (key in SOMAME_CLOUD_KEY).",
+    )
+    parser.add_argument(
+        "--catalogue-role",
+        default="",
+        help="Take a role, and the standard it works to, from the workspace's catalogue.",
+    )
     parser.add_argument("--version", action="version", version=f"somame-local {__version__}")
     args = parser.parse_args(argv)
 
@@ -93,24 +113,43 @@ def main(argv: list[str] | None = None) -> int:
         return 2
     if args.verify:
         return _verify(args.folder)
+    if args.catalogue_role and not args.cloud:
+        print("--catalogue-role takes the role from a workspace: add --cloud.", file=sys.stderr)
+        return 2
+    role, standard = args.role, args.standard
+    cloud = None
     try:
+        if args.cloud:
+            # Oversight was asked for: without it, nothing starts.
+            cloud = Cloud(args.cloud, os.environ.get("SOMAME_CLOUD_KEY", ""))
+            if args.catalogue_role:
+                role, standard = cloud.role(args.catalogue_role)
         specialist = Specialist(
             _model(args),
             args.folder,
-            role=args.role,
-            standard=args.standard,
+            role=role,
+            standard=standard,
             level=SupervisionLevel(args.level),
             commands=args.allow_commands,
             ask=_ask_in_terminal,
+            cloud=cloud,
+            notice=_notice,
         )
-    except (ModelError, TamperDetected) as exc:
+    except (ModelError, TamperDetected, CloudError) as exc:
         print(str(exc), file=sys.stderr)
         return 2
 
     print(
-        f"A {args.role} is working in {specialist.workspace.folder} at level {args.level}. "
-        "Type a request, or exit."
+        f"A {role} is working in {specialist.workspace.folder} at level "
+        f"{int(specialist.level)}. Type a request, or exit."
     )
+    if cloud is not None and cloud.policy is not None:
+        answered = "there" if cloud.policy.approvals_in_cloud else "here"
+        print(
+            f"Overseen by {cloud.policy.workspace} in Somame Cloud as "
+            f"\u201c{cloud.policy.install}\u201d: its log is sent there, and what it holds "
+            f"is answered {answered}."
+        )
     while True:
         try:
             request = input("\nyou> ").strip()
@@ -122,7 +161,10 @@ def main(argv: list[str] | None = None) -> int:
         if not request:
             continue
         try:
-            print(f"\n{args.role}> {specialist.handle(request)}")
+            print(f"\n{role}> {specialist.handle(request)}")
+        except Disconnected as exc:
+            print(f"\n{exc} Stopping.", file=sys.stderr)
+            return 3
         except ModelError as exc:
             print(f"\n{exc}", file=sys.stderr)
 
