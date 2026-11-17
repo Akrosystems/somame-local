@@ -3,20 +3,6 @@
 All notable changes to Somame Core. The mandatory escalation set has not
 changed in any release and will not shrink in any release.
 
-## Unreleased
-
-### Added
-
-- somame-local can be overseen from a Somame Cloud workspace
-  (`--cloud`, with the install's key in `SOMAME_CLOUD_KEY`): it runs no
-  higher than the level the workspace allows, can have held actions
-  answered by a named person there (refused if nobody answers in 15
-  minutes), and sends its audit log after every step for the workspace
-  to check against the hash chain. It fails closed: it does not start if
-  the workspace cannot be reached or refuses the key, and stops if the
-  workspace disconnects it. `--catalogue-role` takes a role and its
-  standard from the workspace's catalogue. Standard library only.
-
 ## 0.2.0
 
 ### Added
@@ -27,6 +13,15 @@ changed in any release and will not shrink in any release.
   executions ask at every level, and every step is written to a
   hash-chained audit log that `somame-local --verify` checks. Standard
   library only, like the rest of the package.
+- somame-local can be overseen from a Somame Cloud workspace
+  (`--cloud`, with the install's key in `SOMAME_CLOUD_KEY`): it runs no
+  higher than the level the workspace allows, can have held actions
+  answered by a named person there (refused if nobody answers in 15
+  minutes), and sends its audit log after every step for the workspace
+  to check against the hash chain. It fails closed: it does not start if
+  the workspace cannot be reached or refuses the key, and stops if the
+  workspace disconnects it. `--catalogue-role` takes a role and its
+  standard from the workspace's catalogue. Also standard library only.
 - `AsyncRunner` and `AsyncApprover`: the supervised runner for hosts on an
   event loop. Tools, undo functions and approvers may be coroutines. Both
   runners now share one implementation of the decision path, so the
