@@ -2,7 +2,8 @@ name: CI
 
 on:
   push:
-    branches: [main, develop]
+    # master until the branch is renamed (docs/LAUNCH.md in Cloud).
+    branches: [main, develop, master]
   pull_request:
 
 jobs:
@@ -12,12 +13,26 @@ jobs:
       fail-fast: false
       matrix:
         python: ["3.11", "3.12", "3.13"]
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: somame
+          POSTGRES_PASSWORD: somame
+          POSTGRES_DB: somame_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U somame" --health-interval 5s --health-timeout 5s
+          --health-retries 10
+    env:
+      # The web office's PostgreSQL store is tested against a real database.
+      SOMAME_TEST_POSTGRES: postgresql://somame:somame@localhost:5432/somame_test
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python }}
-      - run: pip install -e ".[dev]"
+      - run: pip install -e ".[dev,postgres]"
       - run: ruff check src tests
       - run: ruff format --check src tests
       - run: mypy

@@ -28,8 +28,9 @@ from .workspace import PRIVATE, SCHEMAS, Workspace
 #: How many tool calls one request may take before it stops and says so.
 MAX_STEPS = 25
 
-Ask = Callable[[Intent, Decision], bool]
-"""Asked when the gate holds an action: True to allow it, False to refuse."""
+Ask = Callable[[Intent, Decision], bool | tuple[bool, str]]
+"""Asked when the gate holds an action: True to allow it, False to refuse;
+or, with who answered, ``(True, "Ama")``."""
 
 
 def system_prompt(role: str, standard: str, folder: Path, level: SupervisionLevel) -> str:
@@ -67,6 +68,7 @@ class Specialist:
         notice: Callable[[str], None] = lambda message: None,
     ) -> None:
         self.model = model
+        self.role, self.standard = role, standard
         self.workspace = Workspace(folder)
         self.level = SupervisionLevel(level)
         self.ask = ask
@@ -147,7 +149,8 @@ class Specialist:
                 f"{intent.tool} {intent.target or ''}".rstrip()
             )
             return self.cloud.ask(intent, decision)
-        return (self.ask(intent, decision), "you")
+        answer = self.ask(intent, decision)
+        return answer if isinstance(answer, tuple) else (answer, "you")
 
     def handle(self, request: str) -> str:
         """Do what was asked, as far as the gate and you allow. Returns the

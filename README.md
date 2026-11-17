@@ -214,6 +214,55 @@ somame-local is open source and runs on your hardware, so a modified copy
 could stop reporting; the workspace shows when it last heard from each
 install.
 
+The workspace's role catalogue can be kept on the machine, so a role is
+taken without reaching Cloud:
+
+```bash
+somame-local --cloud https://app.somame.example --roles      # once, online
+somame-local --folder ~/books --catalogue-role accounts-payable-specialist
+```
+
+### The web office: one specialist for everyone in the room
+
+```bash
+somame-local --folder ~/books --role bookkeeper --serve
+# The bookkeeper's office is open at http://127.0.0.1:8765/?token=...
+```
+
+The same specialist, in a browser. People type requests with their name;
+the specialist works through them one at a time, in the folder, under the
+same gate. What it holds appears for whoever has the page open, and the
+first answer, with that person's name, is what the audit log records.
+Nobody answering in 15 minutes is a refusal.
+
+- Every call needs the office's token, kept in `.somame/office.token`
+  (readable only by you). The page sets a strict Content-Security-Policy
+  and loads nothing from outside the machine.
+- It listens on this machine only, unless `--host` says otherwise.
+- The conversation and the approvals are kept in SQLite in the folder's
+  `.somame`, or, for one database across several offices on a home
+  server, in PostgreSQL: `pip install "somame-core[postgres]"` and
+  `--database postgresql://...`.
+
+### On a Raspberry Pi
+
+```bash
+sh install/raspberry-pi.sh ~/office "bookkeeper"
+```
+
+installs it as a service on a Raspberry Pi 4 (4 GB or more) or any Debian
+or Ubuntu machine. Your model settings go in `~/.somame/office.env`,
+readable only by you; with [Ollama](https://ollama.com) on the same
+machine, nothing leaves the building.
+
+### On a microcontroller
+
+A microcontroller cannot host Somame, but a sensor or actuator a
+specialist drives can run the gate itself before it acts:
+[`ports/micropython/somame_gate.py`](ports/micropython/README.md) decides
+exactly as `somame_core.gate.decide` does, which a test checks for every
+combination.
+
 ## API surface
 
 | Module | Exports | One line |
@@ -256,8 +305,15 @@ src/somame_local/
   model.py        Anthropic and OpenAI-compatible models, stdlib only
   session.py      the specialist: model proposes, gate decides, you answer
   cloud.py        optional oversight from a Somame Cloud workspace
+  office.py       the web office: the same specialist in a browser
+  store.py        the office's conversation and approvals: SQLite or PostgreSQL
+  roles.py        the workspace's catalogue, kept on this machine
   cli.py          somame-local in the terminal
-tests/            150 tests: no database, no network beyond localhost
+install/
+  raspberry-pi.sh the web office as a service on a Pi or any Debian machine
+ports/micropython/
+  somame_gate.py  the gate on a microcontroller, decided exactly as Core decides
+tests/            165 tests: no network beyond localhost; PostgreSQL when given one
 docs/
   ARCHITECTURE.md how the modules fit together
 .github/

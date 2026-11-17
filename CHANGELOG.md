@@ -22,6 +22,18 @@ changed in any release and will not shrink in any release.
   the workspace cannot be reached or refuses the key, and stops if the
   workspace disconnects it. `--catalogue-role` takes a role and its
   standard from the workspace's catalogue. Also standard library only.
+- The web office (`somame-local --serve`): the same specialist in a
+  browser for everyone in the room. Requests carry the asker's name, held
+  actions are answered by a named person on the page (nobody in 15
+  minutes is a refusal), and every API call needs the office's token. The
+  conversation and approvals are kept in SQLite, or in PostgreSQL with the
+  new `postgres` extra.
+- `--roles` keeps the workspace's catalogue on the machine, so
+  `--catalogue-role` works offline.
+- `install/raspberry-pi.sh`: the web office as a user service on a
+  Raspberry Pi or any Debian or Ubuntu machine.
+- `ports/micropython/somame_gate.py`: the gate for microcontrollers,
+  checked against `somame_core.gate.decide` for every combination.
 - `AsyncRunner` and `AsyncApprover`: the supervised runner for hosts on an
   event loop. Tools, undo functions and approvers may be coroutines. Both
   runners now share one implementation of the decision path, so the

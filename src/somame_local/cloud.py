@@ -147,6 +147,11 @@ class Cloud:
             self.broken = "The workspace already found this install's log does not reproduce."
         return self.policy
 
+    def roles(self) -> list[dict[str, Any]]:
+        """The workspace's whole catalogue, to keep on this machine."""
+        body = self._call("GET", "/me/roles")
+        return [dict(r) for r in body] if isinstance(body, list) else []
+
     def role(self, slug: str) -> tuple[str, str]:
         """A role from the workspace's catalogue: its title and the standard
         it works to."""

@@ -70,6 +70,11 @@ class Workspace:
             self.polls += 1
             state, who = self.answer(self.polls)
             return 200, {"id": route.rsplit("/", 1)[1], "state": state, "decided_by_name": who}
+        if route == "/me/roles":
+            return 200, [
+                {"slug": "bookkeeper", "title": "Bookkeeper", "standard": "AAT Level 3"},
+                {"slug": "auditor", "title": "Auditor", "standard": "ACCA"},
+            ]
         if route == "/me/roles/bookkeeper":
             return 200, {"slug": "bookkeeper", "title": "Bookkeeper", "standard": "AAT Level 3"}
         return 404, {"detail": "No such role in the catalog."}
@@ -292,6 +297,7 @@ def test_the_command_line_takes_a_catalogue_role_and_fails_closed(
         raise EOFError
 
     monkeypatch.setattr("builtins.input", leave)
+    monkeypatch.setenv("SOMAME_HOME", str(tmp_path / "home"))
     common = ["--folder", str(tmp_path), "--base-url", "http://127.0.0.1:9/v1", "--model", "m"]
     monkeypatch.setenv("SOMAME_CLOUD_KEY", KEY)
     args = [*common, "--cloud", workspace.url, "--catalogue-role", "bookkeeper", "--level", "2"]
@@ -300,8 +306,11 @@ def test_the_command_line_takes_a_catalogue_role_and_fails_closed(
     assert "A Bookkeeper is working" in out and "at level 2" in out
     assert "Overseen by Acme Ltd in Somame Cloud" in out
 
-    assert main([*common, "--catalogue-role", "bookkeeper"]) == 2
-    assert "add --cloud" in capsys.readouterr().err
+    # The role it took is kept on this machine, so it works offline too.
+    assert main([*common, "--catalogue-role", "bookkeeper"]) == 0
+    assert "A Bookkeeper is working" in capsys.readouterr().out
+    assert main([*common, "--catalogue-role", "auditor"]) == 2
+    assert "--roles" in capsys.readouterr().err
     monkeypatch.setenv("SOMAME_CLOUD_KEY", "somame_local_wrong")
     assert main([*common, "--cloud", workspace.url]) == 2
     assert "disconnected" in capsys.readouterr().err
@@ -315,3 +324,20 @@ def test_the_workspace_is_reached_over_https() -> None:
         Cloud("http://app.somame.example", KEY)
     Cloud("https://app.somame.example", KEY)
     Cloud("http://localhost:8000", KEY)
+
+
+def test_the_catalogue_is_kept_for_offline_use(
+    tmp_path: Path,
+    workspace: Workspace,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    from somame_local import roles
+
+    monkeypatch.setenv("SOMAME_HOME", str(tmp_path / "home"))
+    monkeypatch.setenv("SOMAME_CLOUD_KEY", KEY)
+    assert main(["--cloud", workspace.url, "--roles"]) == 0
+    assert "Kept 2 roles from Acme Ltd's catalogue" in capsys.readouterr().out
+    assert roles.find("auditor") == {"slug": "auditor", "title": "Auditor", "standard": "ACCA"}
+    assert main(["--roles"]) == 2
+    assert "add --cloud" in capsys.readouterr().err
